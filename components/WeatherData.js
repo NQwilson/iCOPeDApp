@@ -1,14 +1,20 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet, Image, Button } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Image, Button, navigation} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 const WeatherData = ({ data }) => {
+  const navigation = useNavigation(); 
   const fahrenheit = (data.main.temp * 1.8 - 459.67).toFixed(2);
   const celsius = (data.main.temp - 273.15).toFixed(2);
+
+ 
 
   return (
     <View style={styles.container} onStartShouldSetResponder={() => true}>
       <ScrollView style={styles.containerInner}>
         <Text style={styles.title}>{data.name} - {data.sys.country}</Text>
+        <Text style={styles.title}>{data.coord.lat} - {data.coord.lon}</Text>
         <View style={styles.box}>
           <Text style={styles.boxLabel}>{data.weather[0].description}</Text>
           <Image style={styles.image} source={{ uri: `http://openweathermap.org/img/wn/${data.weather[0].icon}.png` }} />
@@ -16,7 +22,6 @@ const WeatherData = ({ data }) => {
         <View style={styles.box}>
           <Text style={styles.boxLabel}>Temp</Text>
           <View style={styles.tempContainer}>
-            <Text style={styles.boxText}>{data.main.aqi}K</Text>
             <Text style={styles.boxText}>{fahrenheit}&#8457;</Text>
             <Text style={styles.boxText}>{celsius}&#8451;</Text>
           </View>
@@ -35,12 +40,12 @@ const WeatherData = ({ data }) => {
         </View>
         <View style={styles.box}>
           <Text style={styles.boxLabel}>Pollution information</Text>
-          <Button
-          title="Click Here"
-          onPress={() => alert('Button Clicked!')}
-          />
-        </View>
 
+          <Button
+            title="Click here!"
+            onPress={() => navigation.navigate('PollutionScreen')}
+            />
+        </View>
       </ScrollView>
     </View>
   );

@@ -96,7 +96,7 @@ const HomeScreen = ({navigation}) => {
             </Text>
 
             <Text style={styles.cardDetailsLink}
-             onPress={() => Linking.openURL('http://google.com')}>
+             onPress={() => navigation.navigate('DietScreen')}>
              Read more
             </Text>
           </View>
@@ -150,7 +150,7 @@ const HomeScreen = ({navigation}) => {
             buttonTitle="Go to my Doctor"
             onPress={() => navigation.navigate('PollutionScreen')}
             />
-          </View>
+           </View>
 
           <View style={styles.cardImgWrapper}>
             <Image

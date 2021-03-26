@@ -1,26 +1,41 @@
 import React from 'react';
 import {getPollution} from '../api/Pollution';
-import { StyleSheet, Text, View, ActivityIndicator, Alert, ScrollView, Button} from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, Alert, ScrollView, Button, FlatList,} from 'react-native';
 import { Component } from 'react';
+import {useTheme} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import {onchangelatlon} from '../components/WeatherData';
+import WeatherData from '../components/WeatherData';
 
-export default class PollutionScreen extends React.Component {
+
+export default class PollutionScreen extends Component {
 
  constructor(props){
      super(props);
      this.state = {
          isLoading: true,
-         data: null,
+         data: [],
      }
- 
-
  }
 
- componentDidMount (){
 
+ 
+ componentDidMount (){
+/*
+    onchangelatlon().then(lat1 =>{
+      this.setState({
+      lat : lat1,
+      });
+    }, error => {
+      Alert.alert('Error', 'Error2', lat);
+   }
+   
+   )
+*/
     getPollution().then(data =>{
         this.setState({
         isLoading: false,
-        data: data
+        data: data.list
         });
 
      }, error => {
@@ -31,169 +46,126 @@ export default class PollutionScreen extends React.Component {
 
 
  }
-
+ 
  render(){
-   console.log(this.state.data);
+
+  // show waiting screen when json data is fetching
+  if(this.state.isLoading) {
     return(
-        <View style={styles.container} onStartShouldSetResponder={() => true}>
-        <ScrollView style={styles.containerInner}>
-        <View style={styles.box}>
-          <Text style={styles.boxLabel}>Temp</Text>
-          <View style={styles.tempContainer}>
-            <Text style={styles.boxText}>{this.state.data}</Text>
-          </View>
-          </View>
-          <View style={styles.box}>
-            <Text style={styles.boxLabel}>Pollution information</Text>
-            <Button
-            title="Click Here"
-            onPress={() => alert('Button Clicked!')}
-            />
-          </View>
-  
-        </ScrollView>
+      <View style={{flex: 1, padding: 20}}>
+        <ActivityIndicator/>
       </View>
+    )
+  }
 
-    );
+   
+  return(
+    
+<View style={styles.container} onStartShouldSetResponder={() => true}>    
+      <FlatList
+        data={this.state.data}
+        renderItem={({item}) => {
+          return (
+            <View style={styles.containerInner}>
 
+             <View style={styles.box} >
+                <Text style={styles.boxLabel}> Air Quality Index </Text>
+                <Text style={styles.boxLabel}> Where 1 = Good, 2 = Fair, 3 = Moderate, 4 = Poor, 5 = Very Poor. </Text>
+                <Text style={styles.boxText}>{item.main.aqi} </Text>
+              </View>
 
- }
+              <View style={styles.box} >
+                <Text style={styles.boxLabel}> Сoncentration of Carbon monoxide </Text>
+                <Text style={styles.boxText}>{item.components.co} μg/m3</Text>
+              </View>
 
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of Nitrogen monoxide</Text>
+                <Text style={styles.boxText}> {item.components.no} μg/m3</Text>
+              </View>
+             
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of Nitrogen dioxide</Text>
+                <Text style={styles.boxText}> {item.components.no2} μg/m3</Text>
+              </View>
 
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of Ozone</Text>
+                <Text style={styles.boxText}> {item.components.o3} μg/m3</Text>
+              </View>
+
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}>  Сoncentration of Sulphur dioxide</Text>
+                <Text style={styles.boxText}> {item.components.so2} μg/m3</Text>
+              </View>
+
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of PM2.5 (Fine particles matter)</Text>
+                <Text style={styles.boxText}> {item.components.pm2_5} μg/m3</Text>
+              </View>
+
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of PM10 (Coarse particulate matter)</Text>
+                <Text style={styles.boxText}> {item.components.pm10} μg/m3</Text>
+              </View>
+
+              <View style={styles.box}>
+                <Text style={styles.boxLabel}> Сoncentration of NH3 (Ammonia)</Text>
+                <Text style={styles.boxText}> {item.components.nh3} μg/m3</Text>
+              </View>
+               
+               </View>
+            
+          )
+        }}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
+ 
+   
+  );
 }
+}
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#e6f2f2',
+    flex: 1
   },
-  sliderContainer: {
-    height: 180,
-    width: '100%',
-    marginTop: 0,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    borderRadius: 8,
+  containerInner: {
+    paddingHorizontal: 20,
   },
-
-  wrapper: {},
-
-  slide: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    borderRadius: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  sliderImage: {
-    height: '100%',
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 8,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    width: '90%',
-    alignSelf: 'center',
-    marginTop: 25,
-    marginBottom: 10,
-  },
-  categoryBtn: {
-    flex: 1,
-    width: '30%',
-    marginHorizontal: 0,
-    alignSelf: 'center',
-  },
-  categoryIcon: {
-    borderWidth: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    width: 70,
-    height: 70,
-    backgroundColor: '#fdeae7' /* '#FF6347' */,
-    borderRadius: 50,
-  },
-  categoryBtnTxt: {
-    alignSelf: 'center',
-    marginTop: 5,
-    color: '#de4f35',
-  },
-  cardsWrapper: {
-    marginTop: 20,
-    width: '90%',
-    alignSelf: 'center',
-  },
-  card: {
-    height: 150,
-    marginVertical: 10,
-    flexDirection: 'row',
-    shadowColor: '#999',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-  },
-  cardImgWrapper: {
-    flex: 1,
-
-  },
-  cardImg: {
-    height: '100%',
-    width: '100%',
-    alignSelf: 'center',
-    borderRadius: 0,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 10,
-    backgroundColor: '#fff',
-  },
-  cardInfo: {
-    flex: 2,
-    padding: 10,
-    borderColor: '#ccc',
-    borderWidth: 0,
-    borderLeftWidth: 0,
-    borderBottomRightRadius: 0,
-    borderTopRightRadius: 0,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    backgroundColor: '#fff',
-  },
-  cardTitle: {
+  box: {
+    borderWidth: 1,
+    borderColor: '#ddd',
     padding: 15,
-    fontWeight: 'bold',
+    marginBottom: 10,
+    alignItems: 'center'
   },
-  cardDetails: {
-    padding: 0,
-    paddingLeft:15,
+  boxLabel: {
+    textTransform: 'uppercase',
     fontSize: 12,
-    color: '#444',
+    letterSpacing: 1,
+    marginBottom: 5,
   },
-
-  cardDetailsLink: {
-    padding: 0,
-    paddingLeft:15,
-    paddingTop:15,
-    fontSize: 12,
-    color: 'blue',
-    textDecorationLine: 'underline',
-  },
-  
-  buttonContainer: {
-    marginTop: 10,
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#87ceeb',
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 20,
-  },
-
-  buttonText: {
-    fontSize: 18,
+  boxText: {
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
-    fontFamily: 'Lato-Regular',
+    alignContent: 'center',
   },
-  
+  image: {
+    width: 50,
+    height: 40,
+    alignContent: 'center',
+  },
+  tempContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignSelf: 'stretch'
+  }
 });

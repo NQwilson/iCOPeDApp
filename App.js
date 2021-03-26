@@ -15,6 +15,7 @@ import WeatherScreen from './screens/WeatherScreen';
 import MainTabScreen from './screens/MainTabScreen';
 import WeatherScreen2 from './screens/WeatherScreen2';
 import PollutionScreen from './screens/PollutionScreen';
+import DietScreen from './screens/DietScreen';
 
 
 const AppStack = createStackNavigator();
@@ -29,6 +30,7 @@ const App = () => {
           <AppStack.Screen name="MainTabScreen" component={MainTabScreen} />
           <AppStack.Screen name="WeatherScreen2" component = {WeatherScreen2} />
           <AppStack.Screen name="PollutionScreen" component = {PollutionScreen} />
+          <AppStack.Screen name="DietScreen" component = {DietScreen} />
         </AppStack.Navigator>
     </NavigationContainer>
   );
